@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Diffie-Hellman Key Exchange</title>
+</head>
+<body>
+    <h2>Diffie-Hellman Key Exchange</h2>
+
+    <label>Enter a prime number (shared by both parties):</label><br>
+    <input type="number" id="prime"><br><br>
+
+    <label>Enter a base (primitive root modulo of prime):</label><br>
+    <input type="number" id="base"><br><br>
+
+    <label>Enter Alice's private key:</label><br>
+    <input type="number" id="alice"><br><br>
+
+    <label>Enter Bob's private key:</label><br>
+    <input type="number" id="bob"><br><br>
+
+    <button onclick="calculateSharedSecret()">Calculate Shared Secret</button>
+
+    <h3 id="result"></h3>
+
+    <script>
+        function modExp(base, exp, mod) {
+            let result = 1;
+            base = base % mod;
+            while (exp > 0) {
+                if (exp % 2 === 1) {
+                    result = (result * base) % mod;
+                }
+                exp = Math.floor(exp / 2);
+                base = (base * base) % mod;
+            }
+            return result;
+        }
+
+        function calculateSharedSecret() {
+            const p = parseInt(document.getElementById("prime").value);
+            const g = parseInt(document.getElementById("base").value);
+            const a = parseInt(document.getElementById("alice").value);
+            const b = parseInt(document.getElementById("bob").value);
+
+            const A = modExp(g, a, p); // Alice's public key
+            const B = modExp(g, b, p); // Bob's public key
+
+            const secretAlice = modExp(B, a, p);
+            const secretBob = modExp(A, b, p);
+
+            document.getElementById("result").innerText =
+                `Alice's Public Key: ${A}\nBob's Public Key: ${B}\n\n` +
+                `Shared Secret (Alice): ${secretAlice}\n` +
+                `Shared Secret (Bob): ${secretBob}\n` +
+                `Match: ${secretAlice === secretBob}`;
+        }
+    </script>
+</body>
+</html>
